@@ -1,0 +1,150 @@
+/* hatterkep */
+html {
+    background: url('images/background2.jpg') repeat fixed;
+    background-size: 400px 400px; 
+}
+
+/* h1 es h2 egyforma stilusu */
+h1 {
+    color: #333;
+    font-family: Arial, sans-serif;
+    text-decoration: underline;
+    font-size: 20px;
+}
+
+h2 {
+    color: #333;
+    font-family: Arial, sans-serif;
+    text-decoration: underline;
+    text-align: center;
+    font-size: 40px;
+}
+
+/*keretes paragrafus*/
+p.border-box {
+    border-width: 4px;
+    border-style: solid;
+    border-top-color: red;
+    border-right-color: blue;
+    border-bottom-color: green;
+    border-left-color: yellow;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.9);
+    font-size: 18px;
+    text-align: center;
+    max-width: 600px; 
+    margin: 20px auto; 
+    font-style: italic;
+    font-weight: bold;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2); 
+}
+
+ol.type1 {
+    list-style-type: decimal-leading-zero;
+    color: blue;
+    font-weight: bold;
+}
+
+.text-style {
+    font-size: 16px;
+    font-weight: bold;
+    font-style: italic;
+    text-align: justify;
+    text-decoration: underline;
+}
+
+p, em {
+    font-size: 16px;
+    font-weight: bold;
+    font-style: italic;
+    text-align: justify;
+    text-decoration: underline;
+}
+
+
+
+/* egy section-on belul a h2 stilusa */
+section h2 {
+    color: #444;
+    font-size: 1.5em;
+    font-family: 'Verdana', sans-serif;
+}
+
+/* hover a linkekre */
+a {
+    color: #0044cc;
+    background-color: rgba(255, 255, 255, 0.6); /* Áttetsző fehér háttér */
+    padding: 2px 5px;
+    border-radius: 5px;
+}
+
+
+a:hover {
+    color: red;
+    font-style: italic;
+}
+
+a:active {
+    color: green;
+    font-weight: bold;
+}
+
+a:visited {
+    color: purple;
+}
+
+/* tablazat styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background-color: #f4a261;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    background-color: #fdf8e1; 
+
+}
+
+.flex-container {
+    display: flex;
+    align-items: center;  
+    justify-content: center; 
+    gap: 20px; 
+    padding: 20px;
+}
+
+.flex-container img {
+    width: 200px;
+    height: auto;
+}
+
+.flex-container .text-box {
+    background-color: #2a9d8f;
+    color: white;
+    padding: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    flex-grow: 1;  
+    max-width: 300px; 
+}
+
+
+/* ha a kepernyo szelesseg kisebb mint 600px akkor a ket kep nem lathato */
+@media (max-width: 600px) {
+    .flex-container img {
+        display: none; 
+    }
+    .flex-container .text-box {
+        width: 100%; 
+        text-align: center;
+    }
+}

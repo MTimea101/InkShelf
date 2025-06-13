@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Messages - Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-10 mx-auto">
+        <h2>👤 Profile</h2>
+
+        <!-- Profile navigation -->
+        <nav class="profile-nav">
+          <ul class="nav nav-tabs border-0">
+            <li class="nav-item">
+              <a class="nav-link" href="/profile">Personal Data</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/profile/messages">
+                Messages
+                <% if (unreadCount > 0) { %>
+                  <span class="message-badge"><%= unreadCount %></span>
+                <% } %>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Messages section -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4>Inbox</h4>
+          <% if (unreadCount > 0) { %>
+            <span class="badge bg-primary"><%= unreadCount %> unread</span>
+          <% } %>
+        </div>
+
+        <% if (messages.length === 0) { %>
+          <div class="alert alert-info text-center">
+            <h5>No messages yet</h5>
+            <p>When someone sends you a message, it will appear here.</p>
+            <a href="/" class="btn btn-primary">Browse Books</a>
+          </div>
+        <% } else { %>
+          <div class="row">
+            <% messages.forEach(message => { %>
+              <div class="col-12 mb-3">
+                <div class="card <%= message.isRead ? 'message-read' : 'message-unread' %>">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong>
+                        <% if (!message.isRead) { %>🔴 <% } %>
+                        <%= message.subject %>
+                      </strong>
+                      <br>
+                      <small class="text-muted">
+                        From: <%= message.senderId.name %> (<%= message.senderId.email %>)
+                      </small>
+                    </div>
+                    <div class="text-end">
+                      <small class="text-muted d-block">
+                        <%= new Date(message.createdAt).toLocaleDateString('ro-RO') %>
+                        <%= new Date(message.createdAt).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' }) %>
+                      </small>
+                      <% if (!message.isRead) { %>
+                        <span class="badge bg-primary">New</span>
+                      <% } %>
+                    </div>
+                  </div>
+
+                  <div class="card-body">
+                    <div class="mb-2">
+                      <strong>Book:</strong>
+                      <% if (message.bookId) { %>
+                        <a href="/books/<%= message.bookId.isbn %>" class="text-decoration-none">
+                          <%= message.bookId.title %>
+                        </a>
+                      <% } else { %>
+                        <span class="text-muted fst-italic">[deleted book]</span>
+                      <% } %>
+                    </div>
+
+                    <div class="mb-3">
+                      <strong>Message:</strong>
+                      <p class="mt-1"><%= message.content %></p>
+                    </div>
+
+                    <div class="d-flex gap-2 flex-wrap">
+                      <% if (!message.isRead) { %>
+                        <form method="POST" action="/messages/<%= message._id %>/mark-read" class="d-inline">
+                          <button type="submit" class="btn btn-success btn-sm">
+                            ✅ Mark as Read
+                          </button>
+                        </form>
+                      <% } %>
+
+                      <form method="POST" action="/messages/<%= message._id %>/delete" class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to delete this message?')">
+                        Delete
+                        </button>
+                      </form>
+
+                      <% if (message.bookId) { %>
+                        <a href="/books/<%= message.bookId.isbn %>" class="btn btn-outline-primary btn-sm">
+                        View Book
+                        </a>
+                      <% } else { %>
+                        <button class="btn btn-outline-secondary btn-sm" disabled title="This book no longer exists">
+                        Book Deleted
+                        </button>
+                      <% } %>
+
+                      <% if (
+                        message.senderId._id.toString() !== user._id.toString() &&
+                        !hasReply[message._id.toString()] &&
+                        !message.originalMessageId
+                      ) { %>
+                        <form method="POST" action="/messages/<%= message._id %>/reply" class="d-inline">
+                          <input type="hidden" name="subject" value="📘 Re: <%= message.subject %>">
+                          <input type="hidden" name="content" value="Hello, I just wanted to let you know that I finished reading this book! 😊">
+                          <button type="submit" class="btn btn-outline-success btn-sm">
+                          Reply
+                          </button>
+                        </form>
+                      <% } else if (hasReply[message._id.toString()]) { %>
+                        <span class="badge bg-secondary">✅ Replied</span>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+
+        <div class="mt-4">
+          <a href="/profile" class="btn btn-secondary">⬅️ Back to Profile</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

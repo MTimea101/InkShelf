@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Inbox</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link ref="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Inbox</h2>
+      <a href="/" class="btn btn-secondary">Back to homepage</a>
+    </div>
+
+    <% if (messages.length === 0) { %>
+      <div class="alert alert-info text-center">
+        <h5>You don't have any messages</h5>
+        <p>When someone sends you a message, it will appear here.</p>
+      </div>
+    <% } else { %>
+      <div class="row">
+        <% messages.forEach(message => { %>
+          <div class="col-12 mb-3">
+            <div class="card <%= message.isRead ? 'message-read' : 'message-unread' %>">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>
+                    <% if (!message.isRead) { %>
+                      🔴 
+                    <% } %>
+                    <%= message.subject %>
+                  </strong>
+                  <br>
+                  <small class="text-muted">
+                    Feladó: <%= message.senderId.name %> (<%= message.senderId.email %>)
+                  </small>
+                </div>
+                <div class="text-end">
+                  <small class="text-muted d-block">
+                    <%= new Date(message.createdAt).toLocaleDateString('ro-RO') %>
+                    <%= new Date(message.createdAt).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' }) %>
+                  </small>
+                  <% if (!message.isRead) { %>
+                    <span class="badge bg-primary">Új</span>
+                  <% } %>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="mb-2">
+                  <strong>Book:</strong> 
+                  <a href="/books/<%= message.bookId.isbn %>" class="text-decoration-none">
+                    <%= message.bookId.title %>
+                  </a>
+                </div>
+                <div class="mb-3">
+                  <strong>Message:</strong>
+                  <p class="mt-1"><%= message.content %></p>
+                </div>
+                <div class="d-flex gap-2">
+                  <% if (!message.isRead) { %>
+                    <form method="POST" action="/messages/<%= message._id %>/mark-read" class="d-inline">
+                      <button type="submit" class="btn btn-success btn-sm">
+                        ✅ Mark as read
+                      </button>
+                    </form>
+                  <% } %>
+                  <form method="POST" action="/messages/<%= message._id %>/delete" class="d-inline">
+                    <button type="submit" class="btn btn-danger btn-sm" 
+                            onclick="return confirm('Biztosan törölni szeretnéd ezt az üzenetet?')">
+                      Delete
+                    </button>
+                  </form>
+                  <a href="/books/<%= message.bookId.isbn %>" class="btn btn-outline-primary btn-sm">
+                    View Book
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

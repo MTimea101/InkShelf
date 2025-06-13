@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Új könyv hozzáadása</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Új könyv hozzáadása</h1>
+  <form id="addBookForm" enctype="multipart/form-data">
+    <input type="text" name="isbn" placeholder="ISBN" required><br>
+    <input type="text" name="title" placeholder="Cím" required><br>
+    <input type="text" name="author" placeholder="Szerző" required><br>
+    <input type="number" name="year" placeholder="Kiadási év" required><br>
+    <textarea name="summary" placeholder="Összefoglaló" required></textarea><br>
+    <input type="file" name="cover" required><br>
+    <input type="number" name="copies" placeholder="Példányok száma" required><br>
+    <button type="submit">Hozzáadás</button>
+  </form>
+
+  <div id="message"></div>
+
+  <script src="addBook.js"></script>
+</body>
+</html>

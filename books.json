@@ -1,0 +1,74 @@
+[
+  {
+    "isbn": "12",
+    "title": "lala",
+    "author": "idk",
+    "year": 2012,
+    "summary": "jo",
+    "cover": "1745846836128-9780753560822-jacket-large.jpg",
+    "copies": 1
+  },
+  {
+    "isbn": "13",
+    "title": "lovers",
+    "author": "idk",
+    "year": 2023,
+    "summary": "szep",
+    "cover": "1745848643560-9780753560822-jacket-large.jpg",
+    "copies": 3
+  },
+  {
+    "isbn": "14",
+    "title": "Kutyak",
+    "author": "Unknown",
+    "year": 2000,
+    "summary": "erdekes",
+    "cover": "1745848953176-dogs.jpg",
+    "copies": 4
+  },
+  {
+    "isbn": "45",
+    "title": "6",
+    "author": "7",
+    "year": 56,
+    "summary": "mi",
+    "cover": "1745862414763-dogs.jpg",
+    "copies": 7
+  },
+  {
+    "isbn": "1234567899",
+    "title": "hihi",
+    "author": "23",
+    "year": 234,
+    "summary": "khmbjaejhwdj,gvcqHWEVGILqjvwcjhvqjwvcqjvcqjlhbjwhCBJQwvb",
+    "cover": "1745863551462-9780753560822-jacket-large.jpg",
+    "copies": 1
+  },
+  {
+    "isbn": "1234567892",
+    "title": "Cicak a falon",
+    "author": "Jo kerdes",
+    "year": 2025,
+    "summary": "Nagyon sok benne a cica, es cukiiii!!",
+    "cover": "1745934528150-cats.jpeg",
+    "copies": 14
+  },
+  {
+    "isbn": "1234567893",
+    "title": "kdhuf",
+    "author": "jo",
+    "year": 20224,
+    "summary": "akuegfkwbebgelwueg",
+    "cover": "1745936931243-cats.jpeg",
+    "copies": 3
+  },
+  {
+    "isbn": "1234567897",
+    "title": "idk",
+    "author": "hihi",
+    "year": 2025,
+    "summary": "szep ekhr lwejhf wejhrbjgk",
+    "cover": "1746366324075-9780753560822-jacket-large.jpg",
+    "copies": 2
+  }
+]

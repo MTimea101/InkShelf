@@ -1,0 +1,103 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+    text-align: center;
+    color: #333;
+}
+
+h1 {
+    margin-top: 30px;
+    font-size: 36px;
+}
+
+p {
+    font-size: 18px;
+    margin-top: 10px;
+    color: #555;
+}
+
+.game_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    gap: 40px;
+    position: relative;
+}
+
+canvas {
+    border: 2px solid #444;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.color-selector {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    background-color: #ffffffcc;
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+}
+
+.color-box {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.color-box:hover {
+    transform: scale(1.1);
+    border-color: #555;
+}
+
+.status {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #222;
+}
+
+.lives {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #d63333;
+}
+
+button {
+    margin-top: 30px;
+    padding: 12px 24px;
+    font-size: 16px;
+    background-color: #28a745;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+button:active {
+    background-color: #1e7e34;
+    transform: scale(0.98);
+}
+
+footer {
+    margin-top: 50px;
+    padding: 20px;
+    background-color: #335a47;
+    color: #f8f9fa;
+    font-size: 14px;
+    text-align: center;
+    border-top: 2px solid #495057;
+}

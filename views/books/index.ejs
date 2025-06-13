@@ -1,0 +1,139 @@
+<h1 class="mb-4 text-center">InkShelf</h1>
+
+<% if (error) { %>
+  <div class="alert alert-danger text-center">
+    <strong>Error:</strong> <%= error %>
+  </div>
+<% } %>
+
+<!-- Search form -->
+<form method="GET" action="/" class="row g-3 mb-4">
+  <div class="col-md-2">
+    <select name="category" class="form-select">
+      <option value="">All Categories</option>
+      <% categories.forEach(cat => { %>
+        <option value="<%= cat %>" <%= selectedCategory === cat ? 'selected' : '' %>><%= cat %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="col-md-3">
+    <input type="text" name="title" class="form-control" placeholder="Title" value="<%= query?.title || '' %>" />
+  </div>
+
+  <div class="col-md-3">
+    <input type="text" name="author" class="form-control" placeholder="Author" value="<%= query?.author || '' %>" />
+  </div>
+
+  <div class="col-md-2">
+    <input type="number" name="minYear" class="form-control" placeholder="Min. Year" value="<%= query?.minYear || '' %>" />
+  </div>
+
+  <div class="col-md-2">
+    <input type="number" name="maxYear" class="form-control" placeholder="Max. Year" value="<%= query?.maxYear || '' %>" />
+  </div>
+
+  <div class="col-md-2 d-flex align-items-center">
+    <div class="form-check">
+      <input type="checkbox" class="form-check-input" name="availableOnly" id="availableOnly" <%= query?.availableOnly === 'on' ? 'checked' : '' %> />
+      <label class="form-check-label" for="availableOnly">Available</label>
+    </div>
+  </div>
+
+  <div class="col-md-1 d-grid">
+    <button type="submit" class="btn btn-primary" style="font-size: 0.8rem;">Search</button>
+  </div>
+</form>
+
+<!-- Filtered results -->
+<% if (query.title || query.author || query.minYear || query.maxYear || query.availableOnly || query.category) { %>
+  <div class="mt-4">
+    <% if (books.length === 0) { %>
+      <p class="text-muted">No books found for the selected filters.</p>
+    <% } else { %>
+      <div class="row row-cols-1 row-cols-md-4 g-4">
+        <% books.forEach(book => { %>
+          <div class="col">
+            <div class="card h-100 shadow-sm">
+              <% if (book.coverUrl) { %>
+                <img src="<%= book.coverUrl %>" class="card-img-top" style="height: 200px; object-fit: cover;" alt="<%= book.title %> cover" />
+              <% } %>
+              <div class="card-body d-flex flex-column justify-content-between text-center">
+                <div>
+                  <h6 class="card-title mb-1"><%= book.title %></h6>
+                  <p class="text-muted small mb-2"><%= book.author %></p>
+                </div>
+                <a href="/books/<%= book.isbn %>" class="btn btn-sm btn-outline-primary mt-auto">Borrow</a>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+<% } %>
+
+<!-- Categories when no filters -->
+<% if (!query.title && !query.author && !query.minYear && !query.maxYear && !query.availableOnly && !query.category) { %>
+  <% Object.entries(booksByCategory).forEach(([category, books]) => { %>
+    <% if (books.length > 0) { %>
+      <h4 class="mt-5 mb-3 text-primary"><%= category %></h4>
+
+      <% if (books.length <= 6) { %>
+        <div class="row row-cols-1 row-cols-md-6 g-4">
+          <% books.forEach(book => { %>
+            <div class="col">
+              <div class="card h-100 shadow-sm d-flex flex-column position-relative">
+                <% if (book.coverUrl) { %>
+                  <img src="<%= book.coverUrl %>" class="card-img-top" style="height: 200px; object-fit: cover;" alt="<%= book.title %> cover" />
+                <% } %>
+                <div class="card-body d-flex flex-column justify-content-between text-center">
+                  <div>
+                    <h6 class="card-title mb-1"><%= book.title %></h6>
+                    <p class="text-muted small mb-2"><%= book.author %></p>
+                  </div>
+                  <a href="/books/<%= book.isbn %>" class="btn btn-sm btn-outline-primary mt-auto">Borrow</a>
+                </div>
+
+                <% if (user?.role === 'admin' || user?.role === 'curator') { %>
+                  <form action="/books/<%= book.isbn %>/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this book?');" class="position-absolute top-0 end-0 m-1">
+                    <button type="submit" class="btn btn-sm delete-top-button" title="Delete book">✖</button>
+                  </form>
+                <% } %>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <!-- Scrollable part -->
+        <div class="book-scroll-wrapper mb-4">
+          <div class="book-scroll">
+            <% books.forEach(book => { %>
+              <div class="book-card position-relative">
+                <% if (user?.role === 'admin' || user?.role === 'curator') { %>
+                  <form action="/books/<%= book.isbn %>/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this book?');" class="position-absolute top-0 end-0 m-1">
+                    <button type="submit" class="btn btn-sm delete-top-button" title="Delete book">✖</button>
+                  </form>
+                <% } %>
+
+                <% if (book.coverUrl) { %>
+                  <img src="<%= book.coverUrl %>" alt="<%= book.title %> cover" class="img-fluid mb-2" />
+                <% } else { %>
+                  <div class="bg-light text-center text-muted d-flex align-items-center justify-content-center" style="height: 200px;">
+                    No cover
+                  </div>
+                <% } %>
+
+                <div class="info text-center mt-auto">
+                  <strong><%= book.title %></strong><br />
+                  <small><%= book.author %></small><br />
+                  <a href="/books/<%= book.isbn %>" class="btn btn-sm btn-outline-primary mt-2">Borrow</a>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      <% } %>
+    <% } %>
+  <% }) %>
+<% } %>

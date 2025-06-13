@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Kölcsönzés / Visszaadás</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <h1>Kölcsönzés vagy Visszaadás</h1>
+
+  <form id="borrowReturnForm">
+    <input type="text" name="name" placeholder="Név" required>
+    <input type="text" name="isbn" placeholder="ISBN" required>
+    <select name="action" required>
+      <option value="borrow">Kölcsönzés</option>
+      <option value="return">Visszaadás</option>
+    </select>
+    <button type="submit">Beküldés</button>
+  </form>
+
+  <p id="message"></p>
+
+  <script src="borrowReturn.js"></script>
+
+</body>
+</html>

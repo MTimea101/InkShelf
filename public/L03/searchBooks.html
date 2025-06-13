@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Keresés a könyvek között</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Keresés</h1>
+  <form id="searchForm">
+    <input type="text" name="title" placeholder="Cím (részlet)"><br>
+    <input type="text" name="author" placeholder="Szerző (részlet)"><br>
+    <input type="number" name="minYear" placeholder="Minimum év"><br>
+    <input type="number" name="maxYear" placeholder="Maximum év"><br>
+    <label><input type="checkbox" name="availableOnly"> Csak elérhető könyvek</label><br>
+    <button type="submit">Keresés</button>
+  </form>
+
+  <div id="results"></div>
+
+  <script src="searchBooks.js"></script>
+</body>
+</html>

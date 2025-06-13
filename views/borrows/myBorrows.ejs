@@ -1,0 +1,143 @@
+<div class="container">
+  <h1 class="text-center mb-4">Books You've Borrowed</h1>
+
+  <%
+    const groupedBorrows = {};
+    for (const b of borrows) {
+      const bookId = b.bookId?._id?.toString();
+      if (!bookId) continue;
+      if (!groupedBorrows[bookId]) groupedBorrows[bookId] = [];
+      groupedBorrows[bookId].push(b);
+    }
+
+    const activeBorrows = [];
+    const pastBorrows = [];
+
+    for (const [bookId, list] of Object.entries(groupedBorrows)) {
+      const active = list.find(b => !b.returnDate);
+      if (active) {
+        activeBorrows.push(active);
+      } else {
+        const lastReturned = list
+          .filter(b => b.returnDate)
+          .sort((a, b) => new Date(b.returnDate) - new Date(a.returnDate))[0];
+        if (lastReturned) pastBorrows.push(lastReturned);
+      }
+    }
+  %>
+
+    <!-- Currently Borrowed -->
+  <% if (activeBorrows.length > 0) { %>
+    <h3 class="mt-4 mb-3">📚 Currently Borrowed</h3>
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+      <% activeBorrows.forEach(borrow => { const book = borrow.bookId; if (!book) return; %>
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            <% if (book.cover) { %>
+              <a href="/books/<%= book.isbn %>">
+                <img src="/uploads/<%= book.cover %>" class="card-img-top" style="height: 200px; object-fit: cover;" alt="cover">
+              </a>
+            <% } else { %>
+              <div class="bg-light text-center d-flex align-items-center justify-content-center" style="height: 200px;">
+                <span class="text-muted">No cover</span>
+              </div>
+            <% } %>
+            <div class="card-body d-flex flex-column text-center">
+              <h6 class="card-title mb-1">
+                <a href="/books/<%= book.isbn %>" class="text-decoration-none text-dark fw-bold">
+                  <%= book.title %>
+                </a>
+              </h6>
+              <p class="text-muted small mb-1"><%= book.author %></p>
+              <p class="text-muted small mb-2"><strong>Borrowed:</strong> <%= new Date(borrow.borrowDate).toLocaleDateString() %></p>
+
+              <form method="POST" action="/books/<%= book.isbn %>/action" class="mt-auto">
+                <input type="hidden" name="action" value="return" />
+                <button class="btn btn-danger w-100">RETURN</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+
+    <!-- Borrow history -->
+  <% if (pastBorrows.length > 0) { %>
+    <h3 class="mt-5 mb-3">📘 Borrow History</h3>
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+      <% pastBorrows.forEach(borrow => { const book = borrow.bookId; if (!book) return; %>
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            <% if (book.cover) { %>
+              <a href="/books/<%= book.isbn %>">
+                <img src="/uploads/<%= book.cover %>" class="card-img-top" style="height: 200px; object-fit: cover;" alt="cover">
+              </a>
+            <% } else { %>
+              <div class="bg-light text-center d-flex align-items-center justify-content-center" style="height: 200px;">
+                <span class="text-muted">No cover</span>
+              </div>
+            <% } %>
+            <div class="card-body d-flex flex-column text-center">
+              <h6 class="card-title mb-1">
+                <a href="/books/<%= book.isbn %>" class="text-decoration-none text-dark fw-bold">
+                  <%= book.title %>
+                </a>
+              </h6>
+              <p class="text-muted small mb-1"><%= book.author %></p>
+              <p class="text-muted small mb-1"><strong>Borrowed:</strong> <%= new Date(borrow.borrowDate).toLocaleDateString() %></p>
+              <p class="text-muted small mb-0"><strong>Returned:</strong> <%= new Date(borrow.returnDate).toLocaleDateString() %></p>
+
+              <div class="mt-auto"></div> 
+              <div class="d-grid gap-2 mt-3">
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#history-<%= book._id %>">
+                  📖 Full History
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <% if (activeBorrows.length === 0 && pastBorrows.length === 0) { %>
+    <p class="text-muted text-center mt-4">You haven’t borrowed any books yet.</p>
+  <% } %>
+
+  <!-- Modals -->
+  <% Object.entries(groupedBorrows).forEach(([bookId, list]) => { 
+    const book = list[0].bookId; 
+    if (!book) return; 
+  %>
+  <div class="modal fade" id="history-<%= bookId %>" tabindex="-1" aria-labelledby="historyLabel-<%= bookId %>" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="historyLabel-<%= bookId %>">📚 Borrow History – <%= book.title %></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <% list
+            .sort((a, b) => new Date(b.borrowDate) - new Date(a.borrowDate))
+            .forEach(borrow => { %>
+              <div class="border-bottom pb-2 mb-2">
+                <p class="mb-1"><strong>Borrowed:</strong> <%= new Date(borrow.borrowDate).toLocaleDateString() %></p>
+                <p class="mb-0">
+                  <% if (borrow.returnDate) { %>
+                    <strong>Returned:</strong> <%= new Date(borrow.returnDate).toLocaleDateString() %>
+                  <% } else { %>
+                    <span class="text-danger">Currently Borrowed</span>
+                  <% } %>
+                </p>
+              </div>
+          <% }) %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% }) %>
+</div>

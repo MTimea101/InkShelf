@@ -1,0 +1,242 @@
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="row g-5">
+        <!-- Left side -->
+        <div class="col-md-4">
+          <div class="card shadow-sm p-3" style="border-radius: 12px;">
+            <% if (message) { %>
+              <div class="alert alert-success text-center">
+                ✅ <%= message %>
+              </div>
+            <% } %>
+
+            <% if (error) { %>
+              <div class="alert alert-danger text-center">
+                ❌ <%= error %>
+              </div>
+            <% } %>
+
+            <% const bookImageUrl = imageUrl(book.cover); %>
+
+            <% if (bookImageUrl) { %>
+              <img
+                src="<%= bookImageUrl %>"
+                class="card-img-top mx-auto d-block mb-3"
+                style="max-height: 300px; object-fit: cover; border-radius: 8px;"
+                alt="<%= book.title %> cover"
+                loading="lazy"
+              />
+            <% } else { %>
+              <div class="bg-light text-center text-muted py-5">No cover</div>
+            <% } %>
+
+            <% if (user) { %>
+              <form action="/books/<%= book.isbn %>/action" method="POST" class="d-grid gap-2 mb-3">
+                <input type="hidden" name="action" value="borrow" />
+                <button class="btn btn-primary btn-lg w-100">Borrow</button>
+              </form>
+
+              <% if (book.copies === 0) { %>
+                <div class="mt-3 p-3 bg-light border rounded">
+                  <div class="d-flex align-items-center mb-2">
+                    <span class="text-warning me-2">⚠️</span>
+                    <strong>Currently no copies available</strong>
+                  </div>
+                  <% const activeBorrows = borrows.filter(b => !b.returnDate); %>
+                  <% if (activeBorrows.length > 0) { %>
+                    <p class="mb-2 text-muted">
+                      📚 Currently borrowed by <strong><%= activeBorrows.length %></strong> users
+                      <a href="/books/<%= book.isbn %>/send-message" class="btn btn-info btn-sm">
+                        💬 Send message to borrowers
+                      </a>
+                      <small class="d-block text-muted mt-1">
+                        You can ask them to notify you when they return it
+                      </small>
+                    </p>
+                  <% } else { %>
+                    <p class="text-muted mb-0">Currently not borrowed, will be available soon.</p>
+                  <% } %>
+                </div>
+              <% } %>
+            <% } else { %>
+              <a href="/login" class="btn btn-primary btn-lg w-100 mb-3">Borrow</a>
+            <% } %>
+
+            <% if (user) { %>
+              <button class="btn btn-outline-secondary w-100 mb-3" id="wishlist-btn" data-isbn="<%= book.isbn %>">
+                ⭐ Want to Read
+              </button>
+            <% } else { %>
+              <a href="/login" class="btn btn-outline-secondary w-100 mb-3">⭐ Want to Read</a>
+            <% } %>
+
+            <!-- Buttons -->
+            <div class="d-grid gap-2">
+              <% if (user) { %>
+                <button class="btn btn-light w-100 mb-2" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                  Review
+                </button>
+              <% } else { %>
+                <a href="/login" class="btn btn-light w-100 mb-2">Review</a>
+              <% } %>
+
+              <% if (user) { %>
+                <button class="btn btn-light w-100 mb-2" data-bs-toggle="modal" data-bs-target="#noteModal">
+                  Notes
+                </button>
+              <% } else { %>
+                <a href="/login" class="btn btn-light w-100 mb-2">Notes</a>
+              <% } %>
+
+              <button class="btn btn-light w-100 mb-2" data-bs-toggle="modal" data-bs-target="#shareModal">
+                <i class="bi bi-share-fill me-1"></i> Share
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right side -->
+        <div class="col-md-8">
+          <h1 class="display-5 mb-3"><%= book.title %></h1>
+          <p><strong>Author:</strong> <%= book.author %></p>
+          <p><strong>Year:</strong> <%= book.year %></p>
+          <p><strong>ISBN:</strong> <%= book.isbn %></p>
+          <p><strong>Available copies:</strong> <%= book.copies %></p>
+
+          <hr class="my-4" />
+          <h3 class="h5">📖 Summary</h3>
+          <p><%= book.summary %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="my-5" />
+  <h3 class="h5 mb-3">⭐ Reviews</h3>
+
+  <!-- Review Modal -->
+  <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form action="/books/<%= book.isbn %>/review" method="POST">
+          <div class="modal-header">
+            <h5 class="modal-title" id="reviewModalLabel">Write a Review</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Rating</label>
+              <select name="rating" class="form-select w-100" required>
+                <% for (let i = 1; i <= 5; i++) { %>
+                  <option value="<%= i %>"><%= '⭐'.repeat(i) %></option>
+                <% } %>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Comment</label>
+              <textarea name="comment" rows="3" class="form-control" required></textarea>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Note Modal -->
+  <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form action="/books/<%= book.isbn %>/note" method="POST">
+          <div class="modal-header">
+            <h5 class="modal-title" id="noteModalLabel">Your Note</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="noteText" class="form-label">Leave a quick note on this book</label>
+              <textarea name="text" class="form-control" id="noteText" rows="5"><%= note?.text || '' %></textarea>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Share Modal -->
+  <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="shareModalLabel">Share this book</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <p>You can copy and share this book's link:</p>
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control"
+              id="share-url"
+              readonly
+              value="<%= request.protocol + '://' + request.headers.host + request.originalUrl %>"
+            />
+            <button class="btn btn-outline-secondary" type="button" id="copy-btn">📋 Copy</button>
+          </div>
+          <div id="copy-feedback" class="text-success mt-2" style="display: none;">
+            ✅ Link copied to clipboard!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if (reviews.length === 0) { %>
+    <p class="text-muted">No reviews yet.</p>
+  <% } else { %>
+    <div class="mt-4" style="max-height: 400px; overflow-y: auto;">
+      <div class="row row-cols-1 row-cols-md-2 g-4">
+        <% reviews.filter(r => r.userId).forEach(r => { %>
+          <div class="col">
+            <div class="card h-100 shadow-sm <%= r.userId._id.toString() === user?._id?.toString() ? 'border-success' : '' %>">
+              <div class="card-body">
+                <h5 class="card-title">
+                  <i class="bi bi-person-circle me-1"></i>
+                  <%= r.userId.name %>
+                  <% if (r.userId._id.toString() === user?._id?.toString()) { %>
+                    <span class="badge bg-success ms-2">Your review</span>
+                  <% } %>
+                </h5>
+                <p class="mb-1"><strong><%= '⭐'.repeat(r.rating) %></strong></p>
+                <p class="card-text"><%= r.comment %></p>
+
+                <% if (
+                  r.userId._id.toString() === user?._id?.toString() ||
+                  user?.role === 'admin' ||
+                  user?.role === 'curator'
+                ) { %>
+                  <form action="/books/<%= book.isbn %>/review/delete" method="POST" class="mt-3">
+                    <input type="hidden" name="reviewUserId" value="<%= r.userId._id %>" />
+                    <button class="btn btn-outline-danger btn-sm">❌ Delete</button>
+                  </form>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+</div>
